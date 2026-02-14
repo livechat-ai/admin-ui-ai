@@ -43,7 +43,7 @@ class ApiClient {
             qdrant: string;
             gemini: string;
             timestamp: string;
-        }>('/api/health');
+        }>('/health');
     }
 
     // Knowledge Base APIs
@@ -61,7 +61,7 @@ class ApiClient {
                 errorMessage?: string;
             }>;
             total: number;
-        }>(`/api/knowledge/documents?${query}`);
+        }>(`/knowledge/documents?${query}`);
     }
 
     async getDocument(id: string) {
@@ -76,11 +76,11 @@ class ApiClient {
             errorMessage?: string;
             metadata?: Record<string, unknown>;
             fileType: string;
-        }>(`/api/knowledge/documents/${id}`);
+        }>(`/knowledge/documents/${id}`);
     }
 
     async uploadDocument(formData: FormData) {
-        const url = `${this.baseURL}/api/knowledge/documents`;
+        const url = `${this.baseURL}/knowledge/documents`;
         const response = await fetch(url, {
             method: 'POST',
             headers: {
@@ -103,14 +103,14 @@ class ApiClient {
 
     async deleteDocument(id: string) {
         return this.request<{ success: boolean; message: string }>(
-            `/api/knowledge/documents/${id}`,
+            `/knowledge/documents/${id}`,
             { method: 'DELETE' }
         );
     }
 
     async reindexDocument(id: string) {
         return this.request<{ success: boolean; message: string }>(
-            `/api/knowledge/reindex/${id}`,
+            `/knowledge/reindex/${id}`,
             { method: 'POST' }
         );
     }
@@ -125,7 +125,7 @@ class ApiClient {
             }>;
             maxScore: number;
             total: number;
-        }>('/api/knowledge/search', {
+        }>('/knowledge/search', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(params),
@@ -160,7 +160,7 @@ class ApiClient {
             }>;
             tokenUsage: number;
             processingTime: number;
-        }>('/api/chat', {
+        }>('/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(params),
