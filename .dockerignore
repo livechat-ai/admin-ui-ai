@@ -1,0 +1,12 @@
+Dockerfile
+.dockerignore
+node_modules
+npm-debug.log
+README.md
+.next
+.git
+.idea
+.vscode
+build.log
+docker-compose.yml
+docker-compose.override.yml

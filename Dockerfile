@@ -12,13 +12,16 @@ RUN pnpm i --frozen-lockfile
 
 # Rebuild the source code only when needed
 FROM base AS builder
+RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # Enable standalone output
 ARG NEXT_PUBLIC_API_URL
+ARG NEXT_PUBLIC_API_KEY
 ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+ENV NEXT_PUBLIC_API_KEY=${NEXT_PUBLIC_API_KEY}
 # Note: In production build, NEXT_PUBLIC_ vars are baked in. 
 # We should probably use runtime config or build args, but for simplicity baking in is okay if URL is known.
 # However, usually we want this configurable. 
