@@ -1,36 +1,33 @@
 /**
  * API Client for KLive-AI Backend
- * Wraps fetch with API key authentication + base URL
+ * Routes requests through Next.js API routes for security
+ * API key is handled server-side only
  */
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3300';
-const API_KEY = process.env.NEXT_PUBLIC_API_KEY || '';
 
 class ApiClient {
     private baseURL: string;
-    private apiKey: string;
 
     constructor() {
-        this.baseURL = API_URL;
-        this.apiKey = API_KEY;
+        // Use Next.js API routes instead of direct backend access
+        this.baseURL = '/api';
     }
 
     private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
         const url = `${this.baseURL}${endpoint}`;
 
-        const headers = {
-            'Authorization': `Bearer ${this.apiKey}`,
-            ...options.headers,
-        };
-
         const response = await fetch(url, {
             ...options,
-            headers,
         });
 
         if (!response.ok) {
-            const error = await response.text();
-            throw new Error(`API Error (${response.status}): ${error}`);
+            let errorMessage: string;
+            try {
+                const errorData = await response.json();
+                errorMessage = errorData.error || JSON.stringify(errorData);
+            } catch {
+                errorMessage = await response.text();
+            }
+            throw new Error(`API Error (${response.status}): ${errorMessage}`);
         }
 
         return response.json();
@@ -83,15 +80,18 @@ class ApiClient {
         const url = `${this.baseURL}/knowledge/documents`;
         const response = await fetch(url, {
             method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${this.apiKey}`,
-            },
             body: formData,
         });
 
         if (!response.ok) {
-            const error = await response.text();
-            throw new Error(`Upload failed (${response.status}): ${error}`);
+            let errorMessage: string;
+            try {
+                const errorData = await response.json();
+                errorMessage = errorData.error || JSON.stringify(errorData);
+            } catch {
+                errorMessage = await response.text();
+            }
+            throw new Error(`Upload failed (${response.status}): ${errorMessage}`);
         }
 
         return response.json() as Promise<{
@@ -169,3 +169,4 @@ class ApiClient {
 }
 
 export const apiClient = new ApiClient();
+

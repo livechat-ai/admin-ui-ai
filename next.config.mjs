@@ -2,10 +2,11 @@
 const nextConfig = {
     output: "standalone",
     async rewrites() {
+        const backendUrl = process.env.BACKEND_URL || "http://livechat-be:3310";
         return [
             {
                 source: "/api/:path*",
-                destination: "http://livechat-be:3310/api/:path*", // Proxy to backend service
+                destination: `${backendUrl}/api/:path*`, // Proxy to backend service
             },
         ];
     },
